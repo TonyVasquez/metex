@@ -1,4 +1,16 @@
 defmodule Metex.Worker do
+  def loop do
+    receive do
+      {sender_pid, location} ->
+        send(sender_pid, {:ok, temperature_of(location)})
+
+      _ ->
+        IO.puts("Don't know how to process this message")
+    end
+
+    loop()
+  end
+
   def temperature_of(location) do
     result =
       location
