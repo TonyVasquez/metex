@@ -11,6 +11,15 @@ defmodule Metex.Worker do
     loop()
   end
 
+  def temperatures_of(cities) do
+    coordinator_pid = spawn(Metex.Coordinator, :loop, [[], Enum.count(cities)])
+
+    Enum.each(cities, fn city ->
+      worker_pid = spawn(Metex.Worker, :loop, [])
+      send(worker_pid, {coordinator_pid, city})
+    end)
+  end
+
   def temperature_of(location) do
     result =
       location
